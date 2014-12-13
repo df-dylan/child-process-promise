@@ -1,6 +1,7 @@
 var assert = require('assert');
 var exec = require('../').exec;
 var spawn = require('../').spawn;
+var fork = require('../').fork;
 
 exec('echo hello')
     .then(function(result) {
@@ -41,5 +42,26 @@ spawn('echo', ['hello'])
         assert.equal(spawnErr.toString(), '');
     })
     .fail(function(err) {
+        console.error("ERROR: ", (err.stack || err));
+    });
+
+var notified = false;
+var forkPromise = fork("./test/hello");
+
+
+if (forkPromise.then) {
+    console.log("got a promise");
+    console.dir(forkPromise);
+} else {
+    console.log("got nothing");
+    console.dir(forkPromise);
+}
+
+forkPromise.progress(function(msg) {
+        assert.equal(msg, "hello");
+        notified = true;
+    }).then(function() {
+        assert.equal(notified, true);
+    }).fail(function(err) {
         console.error("ERROR: ", (err.stack || err));
     });
