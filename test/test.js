@@ -48,15 +48,6 @@ spawn('echo', ['hello'])
 var notified = false;
 var forkPromise = fork("./test/hello");
 
-
-if (forkPromise.then) {
-    console.log("got a promise");
-    console.dir(forkPromise);
-} else {
-    console.log("got nothing");
-    console.dir(forkPromise);
-}
-
 forkPromise.progress(function(msg) {
         assert.equal(msg, "hello");
         notified = true;
